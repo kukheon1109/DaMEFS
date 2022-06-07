@@ -28,6 +28,8 @@ namespace DaMEF
         private BinaryReader m_br;
 
         private TreeNode tNode;
+        private ListViewItem vItem;
+
         int nodeNumber;
 
         private string chunk_list = "";
@@ -41,6 +43,11 @@ namespace DaMEF
         public TreeNode GetTree()
         {
             return tNode;
+        }
+
+        public ListViewItem GetListView()
+        {
+            return vItem;
         }
 
         public bool SetFile(string fileName, bool simple_mode = false)
@@ -68,6 +75,15 @@ namespace DaMEF
                 case "RIFF":
                     riffBox(chunk);
                     break;
+                case "avih":
+                    avihBox(chunk);
+                    break;
+                case "strh":
+                    strhBox(chunk);
+                    break;
+                case "strf":
+                    strfBox(chunk);
+                    break;
                 case "LIST":
                     containerBox(chunk);
                     break;
@@ -75,6 +91,87 @@ namespace DaMEF
                     containerBox(chunk);
                     break;
             }
+        }
+
+        private void strfBox(CHUNK chunk)
+        {
+            List<string> rtrVal = new List<string>();
+
+            rtrVal.Add(String.Format("Type : {0}", chunk.header));
+            rtrVal.Add(String.Format("Description : {0}", "Stream Format Data"));
+            rtrVal.Add(String.Format("Size : {0}", chunk.size));
+            rtrVal.Add(String.Format("Start Offset : {0}", chunk.start));
+            rtrVal.Add(String.Format("End Offset : {0}", chunk.end));
+
+            rtrVal.Add(String.Format("Size : {0}", readInt(4)));
+            rtrVal.Add(String.Format("Width : {0}", readInt(4)));
+            rtrVal.Add(String.Format("Height : {0}", readInt(4)));
+            rtrVal.Add(String.Format("Planes : {0}", readInt(2)));
+            rtrVal.Add(String.Format("BitCount : {0}", readInt(2)));
+            rtrVal.Add(String.Format("Compression : {0}", readInt(4)));
+            rtrVal.Add(String.Format("SizeImage : {0}", readInt(4)));
+            rtrVal.Add(String.Format("XPelsPerMeter : {0}", readInt(4)));
+            rtrVal.Add(String.Format("YPelsPerMeter : {0}", readInt(4)));
+            rtrVal.Add(String.Format("ClrUsed : {0}", readInt(4)));
+            rtrVal.Add(String.Format("ClrImportant : {0}", readInt(4)));
+
+            moveOffset(chunk.end, SeekOrigin.Begin);
+        }
+
+        private void strhBox(CHUNK chunk)
+        {
+            List<string> rtrVal = new List<string>();
+
+            rtrVal.Add(String.Format("Type : {0}", chunk.header));
+            rtrVal.Add(String.Format("Description : {0}", "Stream Header Data"));
+            rtrVal.Add(String.Format("Size : {0}", chunk.size));
+            rtrVal.Add(String.Format("Start Offset : {0}", chunk.start));
+            rtrVal.Add(String.Format("End Offset : {0}", chunk.end));
+
+            rtrVal.Add(String.Format("Type : {0}", readString(4)));
+            rtrVal.Add(String.Format("Handler : {0}", readString(4)));
+            rtrVal.Add(String.Format("Flags : {0}", readInt(4)));
+            rtrVal.Add(String.Format("Reserved : {0}", readInt(4)));
+            rtrVal.Add(String.Format("InitialFrames : {0}", readInt(4)));
+            rtrVal.Add(String.Format("Scale : {0}", readInt(4)));
+            rtrVal.Add(String.Format("Rate : {0}", readInt(4)));
+            rtrVal.Add(String.Format("Start : {0}", readInt(4)));
+            rtrVal.Add(String.Format("Length : {0}", readInt(4)));
+            rtrVal.Add(String.Format("SuggestedBufferSize : {0}", readInt(4)));
+            rtrVal.Add(String.Format("Quality : {0}", readInt(4)));
+            rtrVal.Add(String.Format("SampleSize : {0}", readInt(4)));
+            rtrVal.Add(String.Format("Quality : {0}", readInt(4)));
+            rtrVal.Add(String.Format("SampleSize : {0}", readInt(4)));
+
+            moveOffset(chunk.end, SeekOrigin.Begin);
+        }
+
+        private void avihBox(CHUNK chunk)
+        {
+            List<string> rtrVal = new List<string>();
+
+            rtrVal.Add(String.Format("Type : {0}", chunk.header));
+            rtrVal.Add(String.Format("Description : {0}", "Main AVI header data"));
+            rtrVal.Add(String.Format("Size : {0}", chunk.size));
+            rtrVal.Add(String.Format("Start Offset : {0}", chunk.start));
+            rtrVal.Add(String.Format("End Offset : {0}", chunk.end));
+
+            rtrVal.Add(String.Format("MicroSecPerFrame : {0}", readInt(4)));
+            rtrVal.Add(String.Format("MaxBytesPerSec : {0}", readInt(4)));
+            rtrVal.Add(String.Format("Reserved : {0}", readInt(4)));
+            rtrVal.Add(String.Format("Flags : {0}", readInt(4)));
+            rtrVal.Add(String.Format("TotalFrames : {0}", readInt(4)));
+            rtrVal.Add(String.Format("InitialFrames : {0}", readInt(4)));
+            rtrVal.Add(String.Format("Streams : {0}", readInt(4)));
+            rtrVal.Add(String.Format("SuggestedBufferSize : {0}", readInt(4)));
+            rtrVal.Add(String.Format("Width : {0}", readInt(4)));
+            rtrVal.Add(String.Format("Height : {0}", readInt(4)));
+            rtrVal.Add(String.Format("Scale : {0}", readInt(4)));
+            rtrVal.Add(String.Format("Rate : {0}", readInt(4)));
+            rtrVal.Add(String.Format("Start : {0}", readInt(4)));
+            rtrVal.Add(String.Format("Length : {0}", readInt(4)));
+
+            moveOffset(chunk.end, SeekOrigin.Begin);
         }
 
         private void tkhdBox(CHUNK chunk)
@@ -113,6 +210,17 @@ namespace DaMEF
 
         private void riffBox(CHUNK chunk)
         {
+            List<string> rtrVal = new List<string>();
+
+            rtrVal.Add(String.Format("Type : {0}", chunk.header));
+            rtrVal.Add(String.Format("Description : {0}", "RIFF Chunk"));
+            rtrVal.Add(String.Format("Size : {0}", chunk.size));
+            rtrVal.Add(String.Format("Start Offset : {0}", chunk.start));
+            rtrVal.Add(String.Format("End Offset : {0}", chunk.end));
+
+            rtrVal.Add(String.Format("Format : {0}", readString(4)));
+
+
             moveOffset(12, SeekOrigin.Begin);
         }
 
@@ -179,7 +287,7 @@ namespace DaMEF
             return Encoding.Default.GetString(readdata);
         }
 
-        private int readInt(int size)
+        private int readInt(int size= 4)
         {
 
             byte[] readdata = m_br.ReadBytes(size);
