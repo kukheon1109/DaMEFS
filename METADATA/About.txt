@@ -1,0 +1,5 @@
+﻿Metadata 파싱 하는 모듈
+
+RIFF - 03tx
+ISOBMFF - Text
+NMEA Parser
