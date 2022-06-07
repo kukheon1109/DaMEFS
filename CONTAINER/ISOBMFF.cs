@@ -75,14 +75,78 @@ namespace DaMEF
                 case "tkhd":
                     tkhdBox(chunk);
                     break;
+                case "mdhd":
+                    mdhdBox(chunk);
+                    break;
+                case "hdlr":
+                    hdlrBox(chunk);
+                    break;
                 default: // 일부 박스들 제외하고 대부분
                     containerBox(chunk);
                     break;
             }
         }
 
+        private void hdlrBox(CHUNK chunk)
+        {
+            List<string> rtrVal = new List<string>();
+            rtrVal.Add(String.Format("Type : {0}", chunk.header));
+            rtrVal.Add(String.Format("Description : {0}", "Media Header Box"));
+            rtrVal.Add(String.Format("Size : {0}", chunk.size));
+            rtrVal.Add(String.Format("Start Offset : {0}", chunk.start));
+            rtrVal.Add(String.Format("End Offset : {0}", chunk.end));
+
+            rtrVal.Add(String.Format("version : {0}", readInt(1)));
+            rtrVal.Add(String.Format("Falgs : {0}", readString(3)));
+            rtrVal.Add(String.Format("Component Type : {0}", readInt(4)));
+            rtrVal.Add(String.Format("Component SubType : {0}", readString(4)));
+            rtrVal.Add(String.Format("Component Manufacture : {0}", readString(4)));
+            rtrVal.Add(String.Format("Component Flags Mask : {0}", readString(4)));
+            rtrVal.Add(String.Format("Name : {0}", readString(36)));
+            moveOffset(chunk.end, SeekOrigin.Begin);
+        }
+
+        private void mdhdBox(CHUNK chunk)
+        {
+            List<string> rtrVal = new List<string>();
+            rtrVal.Add(String.Format("Type : {0}", chunk.header));
+            rtrVal.Add(String.Format("Description : {0}", "Media Header Box"));
+            rtrVal.Add(String.Format("Size : {0}", chunk.size));
+            rtrVal.Add(String.Format("Start Offset : {0}", chunk.start));
+            rtrVal.Add(String.Format("End Offset : {0}", chunk.end));
+
+            rtrVal.Add(String.Format("version : {0}", readInt(1)));
+            rtrVal.Add(String.Format("Falgs : {0}", readString(3)));
+            rtrVal.Add(String.Format("Creation Time (UTC+0) : {0}", GlobalValue.util.ConvertHFSDate(readByte(4))));
+            rtrVal.Add(String.Format("Modification Time (UTC+0) : {0}", GlobalValue.util.ConvertHFSDate(readByte(4))));
+            rtrVal.Add(String.Format("Time Scale : {0}", readInt(4)));
+            rtrVal.Add(String.Format("Duration : {0}", readInt(4)));
+
+            moveOffset(chunk.end, SeekOrigin.Begin);
+        }
+
         private void tkhdBox(CHUNK chunk)
         {
+            List<string> rtrVal = new List<string>();
+            rtrVal.Add(String.Format("Type : {0}", chunk.header));
+            rtrVal.Add(String.Format("Description : {0}", "Track Header Box"));
+            rtrVal.Add(String.Format("Size : {0}", chunk.size));
+            rtrVal.Add(String.Format("Start Offset : {0}", chunk.start));
+            rtrVal.Add(String.Format("End Offset : {0}", chunk.end));
+
+            rtrVal.Add(String.Format("version : {0}", readInt(1)));
+            rtrVal.Add(String.Format("Falgs : {0}", readString(3)));
+            rtrVal.Add(String.Format("Creation Time (UTC+0) : {0}", GlobalValue.util.ConvertHFSDate(readByte(4))));
+            rtrVal.Add(String.Format("Modification Time (UTC+0) : {0}", GlobalValue.util.ConvertHFSDate(readByte(4))));
+            rtrVal.Add(String.Format("Track ID : {0}", readInt(4)));
+            rtrVal.Add(String.Format("Reserved : {0}", readInt(4)));
+            rtrVal.Add(String.Format("Duration : {0}", readInt(4)));
+            rtrVal.Add(String.Format("Reserved : {0}", readInt(8)));
+            rtrVal.Add(String.Format("Layer : {0}", readInt(2)));
+            rtrVal.Add(String.Format("Alternate Group : {0}", readInt(2)));
+            rtrVal.Add(String.Format("Volume : {0}", readInt(2)));
+
+
             moveOffset(chunk.end, SeekOrigin.Begin);
         }
 
@@ -112,11 +176,40 @@ namespace DaMEF
 
         private void mvhdBox(CHUNK chunk)
         {
+            List<string> rtrVal = new List<string>();
+
+            rtrVal.Add(String.Format("Type : {0}", chunk.header));
+            rtrVal.Add(String.Format("Description : {0}", "File Type Box"));
+            rtrVal.Add(String.Format("Size : {0}", chunk.size));
+            rtrVal.Add(String.Format("Start Offset : {0}", chunk.start));
+            rtrVal.Add(String.Format("End Offset : {0}", chunk.end));
+
+            rtrVal.Add(String.Format("version : {0}", readInt(4)));
+            rtrVal.Add(String.Format("Creation Time (UTC+0) : {0}", GlobalValue.util.ConvertHFSDate(readByte(4))));
+            rtrVal.Add(String.Format("Modification Time (UTC+0) : {0}", GlobalValue.util.ConvertHFSDate(readByte(4))));
+            rtrVal.Add(String.Format("TimeScale : {0}", readInt(4)));
+            rtrVal.Add(String.Format("Duration : {0}", readInt(4)));
+            rtrVal.Add(String.Format("Preferred Rate : {0}", readInt(4)));
+            rtrVal.Add(String.Format("Preffered Volume : {0}", readInt(2)));
+
             moveOffset(chunk.end, SeekOrigin.Begin);
         }
 
         private void ftypBox(CHUNK chunk)
         {
+            List<string> rtrVal = new List<string>();
+
+            rtrVal.Add(String.Format("Type : {0}", chunk.header));
+            rtrVal.Add(String.Format("Description : {0}", "File Type Box"));
+            rtrVal.Add(String.Format("Size : {0}", chunk.size));
+            rtrVal.Add(String.Format("Start Offset : {0}", chunk.start));
+            rtrVal.Add(String.Format("End Offset : {0}", chunk.end));
+
+            rtrVal.Add(String.Format("major brand : {0}", readString(4)));
+            rtrVal.Add(String.Format("minor version : {0}", readInt(4)));
+            rtrVal.Add(String.Format("Compatible Brand 0 : {0}", readString(4)));
+            rtrVal.Add(String.Format("Compatible Brand 1 : {0}", readString(4)));
+
             moveOffset(chunk.end, SeekOrigin.Begin);
         }
 
@@ -179,9 +272,13 @@ namespace DaMEF
             {
                 return BitConverter.ToInt32(readdata, 0);
             }
-            else
+            else if (size == 2)
             {
                 return BitConverter.ToInt16(readdata, 0);
+            }
+            else
+            {
+                return Convert.ToSByte(readdata[0]);
             }
 
         }
