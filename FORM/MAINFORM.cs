@@ -292,7 +292,9 @@ namespace DaMEF
                     {
                         using (BinaryReader m_br = new BinaryReader(m_stream, new ASCIIEncoding()))
                         {
-                            m_br.Read(hexData, (int)start, (int)(end - start));
+                            m_stream.Seek(start, SeekOrigin.Begin);
+
+                            m_br.Read(hexData, 0, (int)(end - start));
                         }
                     }
 
