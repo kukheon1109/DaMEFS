@@ -244,7 +244,7 @@ namespace DaMEF
 
         private void iSOBMFFToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            string filePath = @"J:\MP4\doyun.mp4";
+            string filePath = @"J:\ForTest\MP4\doyun.mp4";
             ISOBMFF parser = new ISOBMFF();
             parser.SetFile(filePath);
             parser.Parse();
@@ -255,7 +255,7 @@ namespace DaMEF
 
         private void nMEAToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            string filePath = @"J:\NMEA\TS_N0016.NMEA";
+            string filePath = @"J:\ForTest\NMEA\TS_N0016.NMEA";
             NMEA parser = new NMEA();
             parser.SetFile(filePath);
             parser.Parse();
@@ -264,12 +264,11 @@ namespace DaMEF
         private void rIFFToolStripMenuItem_Click(object sender, EventArgs e)
         {
             //for TEST
-            string filePath = @"J:\AVI\Rec_20160721_151553_S.avi";
+            string filePath = @"J:\ForTest\AVI\Rec_20160721_151553_S.avi";
             RunData._targetFile = filePath;
-            RIFF parser = new RIFF();
-            parser.SetFile(filePath);
-            parser.Parse();
-            TreeNode tmp = parser.GetTree();
+            GlobalValue.riff.SetFile(filePath);
+            GlobalValue.riff.Parse();
+            TreeNode tmp = GlobalValue.riff.GetTree();
             containerTree.Nodes.Add(tmp);
             containerTree.ExpandAll();
 
@@ -284,8 +283,32 @@ namespace DaMEF
                 if (data != null)
                 {
                     string selectedChunk = containerTree.SelectedNode.Name.ToString();
-                    long start = Convert.ToInt32(selectedChunk.Split('/')[1]); ;
-                    long end = Convert.ToInt32(selectedChunk.Split('/')[2]); ;
+                    long start = Convert.ToInt32(selectedChunk.Split('/')[1]);
+                    long end = Convert.ToInt32(selectedChunk.Split('/')[2]);
+
+                    List<string> viewItem = new List<string>();
+                    ItemValueView.View = View.Details;
+                    ItemValueView.GridLines = true;
+                    ItemValueView.Columns.Add("Item");
+                    ItemValueView.Columns.Add("Value");
+
+                    if (RunData._targetFile.Contains("AVI"))
+                    {
+                        viewItem = GlobalValue.riff.GetListView(start);
+
+                        foreach (string item in viewItem)
+                        {
+                            string[] insert = item.Split(':');
+                            ListViewItem newitem = new ListViewItem(insert);
+                            ItemValueView.Items.Add(newitem);
+                            
+                        }
+                    }
+                    else if (RunData._targetFile.Contains("MP4"))
+                    {
+                        
+                    }
+                        
 
                     byte[] hexData = new byte[(end - start)];
                     using (FileStream m_stream = new FileStream(RunData._targetFile, FileMode.Open, FileAccess.Read, FileShare.Read))
@@ -307,7 +330,7 @@ namespace DaMEF
             catch (Exception ex)
             {
                 MsgBox.Show(ex.Message, "DaMEF", MsgBox.Buttons.OK);
-                throw;
+
             }
             
 

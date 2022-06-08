@@ -45,7 +45,7 @@ namespace DaMEF
             this.rIFFToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.folderView = new System.Windows.Forms.TreeView();
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.listView1 = new System.Windows.Forms.ListView();
+            this.ItemValueView = new System.Windows.Forms.ListView();
             this.fileGirdView = new System.Windows.Forms.DataGridView();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
@@ -177,15 +177,15 @@ namespace DaMEF
             this.contextMenuStrip1.Name = "contextMenuStrip1";
             this.contextMenuStrip1.Size = new System.Drawing.Size(61, 4);
             // 
-            // listView1
+            // ItemValueView
             // 
-            this.listView1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.listView1.HideSelection = false;
-            this.listView1.Location = new System.Drawing.Point(3, 3);
-            this.listView1.Name = "listView1";
-            this.listView1.Size = new System.Drawing.Size(571, 340);
-            this.listView1.TabIndex = 0;
-            this.listView1.UseCompatibleStateImageBehavior = false;
+            this.ItemValueView.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.ItemValueView.HideSelection = false;
+            this.ItemValueView.Location = new System.Drawing.Point(3, 3);
+            this.ItemValueView.Name = "ItemValueView";
+            this.ItemValueView.Size = new System.Drawing.Size(571, 340);
+            this.ItemValueView.TabIndex = 0;
+            this.ItemValueView.UseCompatibleStateImageBehavior = false;
             // 
             // fileGirdView
             // 
@@ -225,7 +225,7 @@ namespace DaMEF
             this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel2.Controls.Add(this.hexView1, 1, 0);
-            this.tableLayoutPanel2.Controls.Add(this.listView1, 0, 0);
+            this.tableLayoutPanel2.Controls.Add(this.ItemValueView, 0, 0);
             this.tableLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel2.Location = new System.Drawing.Point(244, 413);
             this.tableLayoutPanel2.Name = "tableLayoutPanel2";
@@ -289,7 +289,7 @@ namespace DaMEF
         private System.Windows.Forms.ToolStripMenuItem toolToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem storageMapToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem streamMapToolStripMenuItem;
-        private System.Windows.Forms.ListView listView1;
+        private System.Windows.Forms.ListView ItemValueView;
         private System.Windows.Forms.DataGridView fileGirdView;
         private UserControl.hexView hexView1;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;

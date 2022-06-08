@@ -45,9 +45,13 @@ namespace DaMEF
             return tNode;
         }
 
-        public ListViewItem GetListView()
+        public List<string> GetListView(long chunk_offset)
         {
-            return vItem;
+            List<string> rtrValue = new List<string>();
+            CHUNK chunk_data = new CHUNK();
+            chunk_data = ChunkReader((int)chunk_offset);
+            rtrValue = BoxClassify(chunk_data);
+            return rtrValue;
         }
 
         public bool SetFile(string fileName, bool simple_mode = false)
@@ -68,21 +72,23 @@ namespace DaMEF
             return true;
         }
 
-        private void BoxClassify(CHUNK chunk)
+        private List<string> BoxClassify(CHUNK chunk)
         {
+            List<string> rtrValue = new List<string>();
+
             switch (chunk.header)
             {
                 case "RIFF":
-                    riffBox(chunk);
+                    rtrValue = riffBox(chunk);
                     break;
                 case "avih":
-                    avihBox(chunk);
+                    rtrValue = avihBox(chunk);
                     break;
                 case "strh":
-                    strhBox(chunk);
+                    rtrValue = strhBox(chunk);
                     break;
                 case "strf":
-                    strfBox(chunk);
+                    rtrValue = strfBox(chunk);
                     break;
                 case "LIST":
                     containerBox(chunk);
@@ -91,9 +97,11 @@ namespace DaMEF
                     containerBox(chunk);
                     break;
             }
+
+            return rtrValue;
         }
 
-        private void strfBox(CHUNK chunk)
+        private List<string> strfBox(CHUNK chunk)
         {
             List<string> rtrVal = new List<string>();
 
@@ -116,9 +124,11 @@ namespace DaMEF
             rtrVal.Add(String.Format("ClrImportant : {0}", readInt(4)));
 
             moveOffset(chunk.end, SeekOrigin.Begin);
+
+            return rtrVal;
         }
 
-        private void strhBox(CHUNK chunk)
+        private List<string> strhBox(CHUNK chunk)
         {
             List<string> rtrVal = new List<string>();
 
@@ -144,9 +154,11 @@ namespace DaMEF
             rtrVal.Add(String.Format("SampleSize : {0}", readInt(4)));
 
             moveOffset(chunk.end, SeekOrigin.Begin);
+
+            return rtrVal;
         }
 
-        private void avihBox(CHUNK chunk)
+        private List<string> avihBox(CHUNK chunk)
         {
             List<string> rtrVal = new List<string>();
 
@@ -172,6 +184,7 @@ namespace DaMEF
             rtrVal.Add(String.Format("Length : {0}", readInt(4)));
 
             moveOffset(chunk.end, SeekOrigin.Begin);
+            return rtrVal;
         }
 
         private void tkhdBox(CHUNK chunk)
@@ -208,7 +221,7 @@ namespace DaMEF
             moveOffset(chunk.end, SeekOrigin.Begin);
         }
 
-        private void riffBox(CHUNK chunk)
+        private List<string> riffBox(CHUNK chunk)
         {
             List<string> rtrVal = new List<string>();
 
@@ -222,6 +235,7 @@ namespace DaMEF
 
 
             moveOffset(12, SeekOrigin.Begin);
+            return rtrVal;
         }
 
         public bool Parse()
@@ -331,7 +345,16 @@ namespace DaMEF
         {
 
             CHUNK chunk = new CHUNK();
-            chunk.start = m_stream.Position;
+            if (offset > 0)
+            {
+                chunk.start = offset;
+                m_stream.Seek(offset, SeekOrigin.Begin);
+            }
+            else
+            {
+                chunk.start = m_stream.Position;
+            }
+            
             chunk.header = readString(4);
             if (!(chunk.header == "LIST"))
             {

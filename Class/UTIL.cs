@@ -5,6 +5,7 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace DaMEF
 {
@@ -46,6 +47,12 @@ namespace DaMEF
                       BitConverter.ToUInt32(bytes, 0));
         }
 
+        public ListViewItem StringList_to_ListViewItem(List<string> input)
+        {
+            ListViewItem rtrValue = new ListViewItem();
+
+            return rtrValue;            
+        }
         public string HashGenerator(string hashMode, string filePath)
         {
             string hashValue = "";
